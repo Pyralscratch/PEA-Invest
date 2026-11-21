@@ -1,0 +1,1907 @@
+<!DOCTYPE html>
+<html lang="fr" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mon Plan PEA — Apport 2 800 € + 200 €/mois</title>
+
+  <!-- Google Fonts : Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+
+  <!-- Tailwind CSS via CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+          },
+          colors: {
+            brand: {
+              50: '#ecfdf5',
+              100: '#d1fae5',
+              500: '#10b981',
+              600: '#059669',
+              700: '#047857',
+            }
+          }
+        }
+      }
+    };
+  </script>
+
+  <!-- Chart.js via CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+
+  <style>
+    /* Style personnalisé pour les curseurs (range inputs) */
+    input[type="range"] {
+      -webkit-appearance: none;
+      appearance: none;
+      background: transparent;
+      cursor: pointer;
+    }
+    input[type="range"]::-webkit-slider-runnable-track {
+      height: 6px;
+      border-radius: 9999px;
+      background: #e2e8f0;
+    }
+    .dark input[type="range"]::-webkit-slider-runnable-track {
+      background: #334155;
+    }
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      height: 18px;
+      width: 18px;
+      border-radius: 9999px;
+      background: #059669;
+      border: 2px solid #ffffff;
+      box-shadow: 0 1px 4px rgba(15, 23, 42, 0.25);
+      margin-top: -6px;
+      transition: transform 0.15s ease;
+    }
+    input[type="range"]::-webkit-slider-thumb:hover {
+      transform: scale(1.12);
+    }
+    .dark input[type="range"]::-webkit-slider-thumb {
+      border-color: #0f172a;
+    }
+    /* Animation des notifications toast */
+    @keyframes slideUpFade {
+      from { opacity: 0; transform: translate(-50%, 16px); }
+      to { opacity: 1; transform: translate(-50%, 0); }
+    }
+    .toast-anim {
+      animation: slideUpFade 0.22s ease-out forwards;
+    }
+  </style>
+</head>
+<body class="bg-[#F8FAFC] text-[#0F172A] dark:bg-slate-950 dark:text-slate-100 font-sans antialiased min-h-screen flex flex-col transition-colors duration-200">
+
+  <!-- ==================== EN-TÊTE PRINCIPAL ==================== -->
+  <header class="sticky top-0 z-30 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border-b border-slate-200 dark:border-slate-800">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16 gap-2">
+        <!-- Logo & Titre -->
+        <div class="flex items-center gap-3 min-w-0">
+          <div class="w-9 h-9 rounded-xl bg-emerald-600 text-white flex items-center justify-center shrink-0 shadow-sm shadow-emerald-600/20">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M3 17l6-6 4 4 8-8M14 7h7v7" />
+            </svg>
+          </div>
+          <div class="truncate">
+            <h1 class="text-base sm:text-lg font-bold tracking-tight text-slate-900 dark:text-white leading-tight truncate">
+              Mon Plan <span class="text-emerald-600 dark:text-emerald-400">PEA</span>
+            </h1>
+            <p id="header-subtitle" class="text-[11px] text-slate-500 dark:text-slate-400 hidden sm:block truncate">
+              2 800 € au départ + 200 €/mois
+            </p>
+          </div>
+        </div>
+
+        <!-- Navigation Desktop (3 Onglets) -->
+        <nav class="hidden md:flex items-center bg-slate-100 dark:bg-slate-800/80 p-1 rounded-xl border border-slate-200/70 dark:border-slate-700/60" aria-label="Navigation principale">
+          <button onclick="switchTab('catalog')" id="nav-desktop-catalog" class="nav-tab-desktop px-4 py-2 text-sm font-semibold rounded-lg transition-all flex items-center gap-2">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+            </svg>
+            Sélection PEA
+          </button>
+          <button onclick="switchTab('plan')" id="nav-desktop-plan" class="nav-tab-desktop px-4 py-2 text-sm font-semibold rounded-lg transition-all flex items-center gap-2">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z" />
+              <path stroke-linecap="round" stroke-linejoin="round" d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z" />
+            </svg>
+            <span id="nav-plan-label-desktop">Mon Plan (2 800 € + 200 €/m)</span>
+            <span id="plan-count-badge-desktop" class="ml-0.5 px-1.5 py-0.5 text-[11px] font-bold rounded-full bg-emerald-100 text-emerald-700 dark:bg-emerald-900/60 dark:text-emerald-300">0</span>
+          </button>
+          <button onclick="switchTab('simulator')" id="nav-desktop-simulator" class="nav-tab-desktop px-4 py-2 text-sm font-semibold rounded-lg transition-all flex items-center gap-2">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+            </svg>
+            Simulateur Long Terme
+          </button>
+        </nav>
+
+        <!-- Actions rapides : Réinitialiser & Mode Sombre -->
+        <div class="flex items-center gap-2 shrink-0">
+          <button onclick="openResetModal()" title="Réinitialiser tous les paramètres" class="p-2.5 sm:px-3 sm:py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-rose-50 hover:text-rose-600 hover:border-rose-200 dark:hover:bg-rose-950/40 dark:hover:text-rose-400 dark:hover:border-rose-900 transition-colors flex items-center gap-1.5 text-xs font-semibold">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+            </svg>
+            <span class="hidden sm:inline">Réinitialiser</span>
+          </button>
+
+          <button onclick="toggleDarkMode()" id="dark-mode-btn" title="Basculer le thème clair/sombre" class="p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors">
+            <svg class="w-5 h-5 block dark:hidden" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+            </svg>
+            <svg class="w-5 h-5 hidden dark:block" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ==================== BANDEAU INFORMATIF DISCRET ==================== -->
+  <div class="bg-slate-100/90 dark:bg-slate-900/60 border-b border-slate-200/80 dark:border-slate-800/80">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2 flex items-start sm:items-center gap-2 text-xs text-slate-600 dark:text-slate-400">
+      <svg class="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5 sm:mt-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+      </svg>
+      <p>
+        <strong class="font-semibold text-slate-700 dark:text-slate-300">Avertissement :</strong>
+        Les cours et rendements affichés sont purement indicatifs (modifiables librement). Cet outil pédagogique ne constitue pas un conseil en investissement financier ; investir en bourse comporte un risque de perte en capital.
+      </p>
+    </div>
+  </div>
+
+  <!-- ==================== CONTENU PRINCIPAL ==================== -->
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 pb-28 md:pb-12">
+
+    <!-- ========================================================= -->
+    <!-- ONGLET 1 : SÉLECTION PEA (CATALOGUE D'ACTIFS)             -->
+    <!-- ========================================================= -->
+    <section id="tab-catalog" class="space-y-6">
+      <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
+        <div>
+          <h2 class="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">
+            Sélection d'actifs éligibles PEA
+          </h2>
+          <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">
+            12 ETF et actions européennes de référence avec code ISIN, prix indicatif éditable et ajout en un clic dans votre plan.
+          </p>
+        </div>
+        <div class="flex flex-wrap items-center gap-2 text-xs font-medium text-slate-600 dark:text-slate-300 bg-white dark:bg-slate-900 px-3.5 py-2 rounded-xl border border-slate-200 dark:border-slate-800 self-start md:self-auto shadow-sm">
+          <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+          <span>Départ : <strong id="catalog-initial-display" class="text-slate-900 dark:text-white">2 800 €</strong></span>
+          <span class="text-slate-300 dark:text-slate-700">|</span>
+          <span>Mensuel : <strong id="catalog-budget-display" class="text-emerald-600 dark:text-emerald-400">200 €/mois</strong></span>
+        </div>
+      </div>
+
+      <!-- Barre de recherche et filtres -->
+      <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-4 shadow-sm space-y-4">
+        <div class="relative">
+          <svg class="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+          </svg>
+          <input
+            type="text"
+            id="catalog-search"
+            oninput="renderCatalog()"
+            placeholder="Rechercher par nom, ticker (WPEA, AI.PA), ISIN ou secteur..."
+            class="w-full pl-10 pr-4 py-2.5 text-sm rounded-xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/40 focus:border-emerald-500 transition"
+          />
+        </div>
+
+        <!-- Filtres par catégorie -->
+        <div class="flex flex-wrap items-center gap-2" id="category-filters">
+          <button onclick="setCategoryFilter('all')" data-filter="all" class="cat-filter-btn px-3.5 py-2 text-xs sm:text-sm font-semibold rounded-xl transition-all">Tous (12)</button>
+          <button onclick="setCategoryFilter('ETF')" data-filter="ETF" class="cat-filter-btn px-3.5 py-2 text-xs sm:text-sm font-semibold rounded-xl transition-all">ETF (4)</button>
+          <button onclick="setCategoryFilter('Action')" data-filter="Action" class="cat-filter-btn px-3.5 py-2 text-xs sm:text-sm font-semibold rounded-xl transition-all">Actions (8)</button>
+          <button onclick="setCategoryFilter('affordable')" data-filter="affordable" class="cat-filter-btn px-3.5 py-2 text-xs sm:text-sm font-semibold rounded-xl transition-all">Accessibles &lt; 200 €</button>
+        </div>
+      </div>
+
+      <!-- Grille des cartes actifs -->
+      <div id="catalog-grid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+        <!-- Généré dynamiquement par JS -->
+      </div>
+    </section>
+
+    <!-- ========================================================= -->
+    <!-- ONGLET 2 : MON PLAN (2 800 € + 200 €/MOIS)                -->
+    <!-- ========================================================= -->
+    <section id="tab-plan" class="hidden space-y-6">
+      <!-- En-tête + 2 champs mis en avant : Apport initial & Versement mensuel -->
+      <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-5 shadow-sm space-y-5">
+        <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+          <div>
+            <h2 class="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">
+              Mon Plan d'investissement PEA
+            </h2>
+            <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">
+              Répartissez votre apport initial dès l'ouverture et automatisez vos achats mensuels en parts entières.
+            </p>
+          </div>
+
+          <!-- Deux champs modifiables mis en avant -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full lg:w-auto">
+            <!-- Apport initial -->
+            <div class="bg-emerald-50/70 dark:bg-emerald-950/30 border border-emerald-200/80 dark:border-emerald-800/60 p-3.5 rounded-xl flex items-center justify-between gap-3">
+              <div>
+                <label for="initial-capital-input" class="block text-[11px] font-bold uppercase tracking-wider text-emerald-800 dark:text-emerald-300">
+                  Apport initial à répartir
+                </label>
+                <span class="text-[11px] text-emerald-700/80 dark:text-emerald-400/80">Investissement Jour 1</span>
+              </div>
+              <div class="relative w-28 shrink-0">
+                <input
+                  type="number"
+                  id="initial-capital-input"
+                  min="0"
+                  max="150000"
+                  step="100"
+                  value="2800"
+                  oninput="handleInitialChange(this.value)"
+                  class="w-full pl-2.5 pr-7 py-2 text-base font-extrabold text-right rounded-lg bg-white dark:bg-slate-900 border border-emerald-300 dark:border-emerald-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                />
+                <span class="absolute right-2.5 top-1/2 -translate-y-1/2 text-sm font-bold text-slate-400">€</span>
+              </div>
+            </div>
+
+            <!-- Versement mensuel -->
+            <div class="bg-slate-50 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-700 p-3.5 rounded-xl flex items-center justify-between gap-3">
+              <div>
+                <label for="monthly-budget-input" class="block text-[11px] font-bold uppercase tracking-wider text-slate-600 dark:text-slate-300">
+                  Versement mensuel
+                </label>
+                <span class="text-[11px] text-slate-500 dark:text-slate-400">DCA programmé</span>
+              </div>
+              <div class="relative w-28 shrink-0">
+                <input
+                  type="number"
+                  id="monthly-budget-input"
+                  min="0"
+                  max="10000"
+                  step="10"
+                  value="200"
+                  oninput="handleBudgetChange(this.value)"
+                  class="w-full pl-2.5 pr-7 py-2 text-base font-extrabold text-right rounded-lg bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-600 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                />
+                <span class="absolute right-2.5 top-1/2 -translate-y-1/2 text-sm font-bold text-slate-400">€</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Stratégies pré-remplies en 1 clic -->
+      <div class="space-y-2.5">
+        <p class="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 px-1">
+          Stratégies pré-remplies en 1 clic
+        </p>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+          <button onclick="applyPreset('world')" class="text-left p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-emerald-500 dark:hover:border-emerald-500 hover:shadow-md transition-all group">
+            <div class="flex items-center justify-between mb-1">
+              <span class="text-sm font-bold text-slate-900 dark:text-white group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">100% ETF Monde</span>
+              <span class="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300">Simple &amp; Global</span>
+            </div>
+            <p class="text-xs text-slate-500 dark:text-slate-400">100% WPEA — Diversification mondiale instantanée, idéal pour investir chaque euro sans reliquat.</p>
+          </button>
+
+          <button onclick="applyPreset('core_fr')" class="text-left p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-emerald-500 dark:hover:border-emerald-500 hover:shadow-md transition-all group">
+            <div class="flex items-center justify-between mb-1">
+              <span class="text-sm font-bold text-slate-900 dark:text-white group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">Cœur ETF + Actions FR</span>
+              <span class="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300">Équilibré</span>
+            </div>
+            <p class="text-xs text-slate-500 dark:text-slate-400">70% WPEA, 15% Air Liquide, 15% TotalEnergies — Socle mondial complété par 2 leaders français.</p>
+          </button>
+
+          <button onclick="applyPreset('dividends')" class="text-left p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-emerald-500 dark:hover:border-emerald-500 hover:shadow-md transition-all group">
+            <div class="flex items-center justify-between mb-1">
+              <span class="text-sm font-bold text-slate-900 dark:text-white group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">Actions à Dividendes</span>
+              <span class="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300">Rendement</span>
+            </div>
+            <p class="text-xs text-slate-500 dark:text-slate-400">35% TotalEnergies, 35% Vinci, 30% Sanofi — Revenus réguliers réinvestis dans l'enveloppe PEA.</p>
+          </button>
+        </div>
+      </div>
+
+      <!-- Grille principale : Pondérations & Plans d'achat à gauche + Donut & Synthèse globale à droite -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+
+        <!-- Colonne gauche (8 cols) -->
+        <div class="lg:col-span-8 space-y-6">
+
+          <!-- Bloc 1 : Curseurs de pondération -->
+          <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-5 shadow-sm">
+            <div class="flex flex-wrap items-center justify-between gap-3 pb-4 border-b border-slate-100 dark:border-slate-800">
+              <div>
+                <h3 class="text-base font-bold text-slate-900 dark:text-white">
+                  Pondération de vos actifs
+                </h3>
+                <p id="weight-status-text" class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                  Total des pondérations : 100 %
+                </p>
+              </div>
+              <div class="flex items-center gap-2">
+                <button onclick="balanceWeightsTo100()" class="px-3.5 py-2 text-xs font-semibold rounded-xl bg-slate-900 dark:bg-emerald-600 text-white hover:bg-slate-800 dark:hover:bg-emerald-700 transition-colors shadow-sm">
+                  Équilibrer à 100%
+                </button>
+                <button onclick="switchTab('catalog')" class="px-3 py-2 text-xs font-semibold rounded-xl border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
+                  + Ajouter
+                </button>
+              </div>
+            </div>
+
+            <div id="plan-weights-container" class="divide-y divide-slate-100 dark:divide-slate-800 mt-1">
+              <!-- Généré dynamiquement par JS -->
+            </div>
+          </div>
+
+          <!-- Bloc 2 : Plans d'achat concrets (Apport initial & Mensuel) avec sélecteur de vue -->
+          <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-5 shadow-sm space-y-5">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div>
+                <h3 class="text-base font-bold text-slate-900 dark:text-white">
+                  Feuille d'ordres (Parts entières sur PEA)
+                </h3>
+                <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                  Détail exact des ordres à passer au Jour 1 puis chaque mois.
+                </p>
+              </div>
+
+              <!-- Sélecteur de vue -->
+              <div class="inline-flex bg-slate-100 dark:bg-slate-800 p-1 rounded-xl border border-slate-200/70 dark:border-slate-700/60 self-start sm:self-auto">
+                <button onclick="setPlanView('both')" id="view-btn-both" class="plan-view-btn px-3 py-1.5 text-xs font-semibold rounded-lg transition-all">Les deux</button>
+                <button onclick="setPlanView('initial')" id="view-btn-initial" class="plan-view-btn px-3 py-1.5 text-xs font-semibold rounded-lg transition-all">Apport initial</button>
+                <button onclick="setPlanView('monthly')" id="view-btn-monthly" class="plan-view-btn px-3 py-1.5 text-xs font-semibold rounded-lg transition-all">Mensuel</button>
+              </div>
+            </div>
+
+            <!-- Tableau A : Plan d'achat Apport Initial (2 800 €) -->
+            <div id="block-initial-orders" class="space-y-2.5">
+              <div class="flex items-center justify-between">
+                <span class="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-emerald-700 dark:text-emerald-400">
+                  <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                  A. Plan d'achat initial (<span id="table-initial-title-val">2 800 €</span>)
+                </span>
+                <span id="table-initial-badge" class="text-[11px] font-semibold text-slate-500 dark:text-slate-400"></span>
+              </div>
+              <div class="overflow-x-auto rounded-xl border border-slate-200 dark:border-slate-800">
+                <table class="w-full text-left border-collapse text-xs">
+                  <thead>
+                    <tr class="bg-slate-50 dark:bg-slate-800/70 text-slate-500 dark:text-slate-400 border-b border-slate-200 dark:border-slate-800">
+                      <th class="py-2.5 px-3 font-semibold">Actif</th>
+                      <th class="py-2.5 px-3 font-semibold text-right">Cible</th>
+                      <th class="py-2.5 px-3 font-semibold text-right">Parts Jour 1</th>
+                      <th class="py-2.5 px-3 font-semibold text-right">Investi réel</th>
+                      <th class="py-2.5 px-3 font-semibold text-right">Frais (0,5%)</th>
+                      <th class="py-2.5 px-3 font-semibold text-right">Reliquat</th>
+                    </tr>
+                  </thead>
+                  <tbody id="tbody-initial-orders" class="divide-y divide-slate-100 dark:divide-slate-800">
+                    <!-- JS -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <!-- Tableau B : Plan d'achat Mensuel (200 €/mois) -->
+            <div id="block-monthly-orders" class="space-y-2.5">
+              <div class="flex items-center justify-between">
+                <span class="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300">
+                  <span class="w-2 h-2 rounded-full bg-slate-600 dark:bg-slate-400"></span>
+                  B. Plan d'achat mensuel (<span id="table-monthly-title-val">200 €</span> / mois)
+                </span>
+                <span id="table-monthly-badge" class="text-[11px] font-semibold text-slate-500 dark:text-slate-400"></span>
+              </div>
+              <div class="overflow-x-auto rounded-xl border border-slate-200 dark:border-slate-800">
+                <table class="w-full text-left border-collapse text-xs">
+                  <thead>
+                    <tr class="bg-slate-50 dark:bg-slate-800/70 text-slate-500 dark:text-slate-400 border-b border-slate-200 dark:border-slate-800">
+                      <th class="py-2.5 px-3 font-semibold">Actif</th>
+                      <th class="py-2.5 px-3 font-semibold text-right">Cible / mois</th>
+                      <th class="py-2.5 px-3 font-semibold text-right">Parts / mois</th>
+                      <th class="py-2.5 px-3 font-semibold text-right">Investi réel</th>
+                      <th class="py-2.5 px-3 font-semibold text-right">Frais (0,5%)</th>
+                      <th class="py-2.5 px-3 font-semibold text-right">Reliquat / Fréquence</th>
+                    </tr>
+                  </thead>
+                  <tbody id="tbody-monthly-orders" class="divide-y divide-slate-100 dark:divide-slate-800">
+                    <!-- JS -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Colonne droite (4 cols) : Donut + Récapitulatif global -->
+        <div class="lg:col-span-4 space-y-4">
+          <!-- Graphique Donut -->
+          <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-5 shadow-sm">
+            <h3 class="text-base font-bold text-slate-900 dark:text-white mb-4">
+              Allocation cible
+            </h3>
+            <div class="relative h-56 w-full flex items-center justify-center">
+              <canvas id="allocationChart"></canvas>
+              <div id="donut-empty-state" class="hidden text-center text-xs text-slate-400">
+                Ajoutez des actifs pour afficher la répartition.
+              </div>
+            </div>
+          </div>
+
+          <!-- Récapitulatif Global (Jour 1 + Mensuel) -->
+          <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-5 shadow-sm space-y-4">
+            <h3 class="text-base font-bold text-slate-900 dark:text-white">
+              Récapitulatif global
+            </h3>
+
+            <!-- Sous-bloc Jour 1 -->
+            <div class="p-3.5 rounded-xl bg-emerald-50/70 dark:bg-emerald-950/30 border border-emerald-200/70 dark:border-emerald-800/50 space-y-2 text-xs">
+              <p class="font-bold text-emerald-800 dark:text-emerald-300 uppercase tracking-wider text-[11px]">
+                Ouverture — Jour 1 (<span id="sum-init-target">2 800 €</span>)
+              </p>
+              <div class="flex justify-between">
+                <span class="text-slate-600 dark:text-slate-400">Investi en parts entières</span>
+                <span id="sum-init-invested" class="font-extrabold text-emerald-700 dark:text-emerald-400">0,00 €</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-slate-600 dark:text-slate-400">Frais courtage max (0,5%)</span>
+                <span id="sum-init-fees" class="font-semibold text-slate-700 dark:text-slate-300">0,00 €</span>
+              </div>
+              <div class="flex justify-between pt-1.5 border-t border-emerald-200/70 dark:border-emerald-800/50">
+                <span class="font-semibold text-slate-700 dark:text-slate-200">Reliquat espèces Jour 1</span>
+                <span id="sum-init-cash" class="font-bold text-slate-900 dark:text-white">0,00 €</span>
+              </div>
+            </div>
+
+            <!-- Sous-bloc Mensuel -->
+            <div class="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/70 dark:border-slate-700/60 space-y-2 text-xs">
+              <p class="font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider text-[11px]">
+                Rythme mensuel (<span id="sum-month-target">200 €</span> / mois)
+              </p>
+              <div class="flex justify-between">
+                <span class="text-slate-600 dark:text-slate-400">Investi chaque mois</span>
+                <span id="sum-month-invested" class="font-bold text-slate-900 dark:text-white">0,00 €</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-slate-600 dark:text-slate-400">Frais courtage max (0,5%)</span>
+                <span id="sum-month-fees" class="font-semibold text-slate-700 dark:text-slate-300">0,00 €</span>
+              </div>
+              <div class="flex justify-between">
+                <span class="text-slate-600 dark:text-slate-400">Reliquat espèces mensuel</span>
+                <span id="sum-month-cash" class="font-semibold text-slate-700 dark:text-slate-300">0,00 €</span>
+              </div>
+              <div class="flex justify-between pt-1.5 border-t border-slate-200 dark:border-slate-700">
+                <span class="font-semibold text-slate-700 dark:text-slate-200">Disponible au Mois 1*</span>
+                <span id="sum-month1-total" class="font-extrabold text-emerald-600 dark:text-emerald-400">0,00 €</span>
+              </div>
+            </div>
+
+            <!-- Dividende moyen -->
+            <div class="flex items-center justify-between pt-1 text-sm">
+              <span class="text-slate-600 dark:text-slate-300 font-medium text-xs">Rendement dividende moyen</span>
+              <span id="summary-dividend" class="px-2.5 py-1 rounded-lg bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 font-bold text-xs">
+                0,00 % / an
+              </span>
+            </div>
+
+            <p class="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed">
+              * Le montant disponible au Mois 1 correspond à votre versement mensuel cumulé au reliquat espèces restant de votre apport initial. Les frais de courtage PEA en ligne sont légalement plafonnés à 0,5 %.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================================= -->
+    <!-- ONGLET 3 : SIMULATEUR LONG TERME (INTÉRÊTS COMPOSÉS)      -->
+    <!-- ========================================================= -->
+    <section id="tab-simulator" class="hidden space-y-6">
+      <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-3">
+        <div>
+          <h2 class="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">
+            Simulateur Long Terme &amp; Fiscalité PEA
+          </h2>
+          <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">
+            Synchronisé avec votre plan : projetez vos intérêts composés sous le plafond PEA de 150 000 € et comparez avec un Compte-Titres (PFU 30%).
+          </p>
+        </div>
+        <span class="inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-xl bg-emerald-50 dark:bg-emerald-950/50 text-emerald-700 dark:text-emerald-300 border border-emerald-200/70 dark:border-emerald-800/60 self-start sm:self-auto">
+          <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+          Synchronisé avec Mon Plan
+        </span>
+      </div>
+
+      <!-- Cartes KPI -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+        <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-5 shadow-sm">
+          <p class="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Capital final brut</p>
+          <p id="kpi-gross" class="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white mt-1.5 tracking-tight">0 €</p>
+          <p id="kpi-multiplier" class="text-xs text-slate-500 dark:text-slate-400 mt-1">Soit x1,00 votre mise</p>
+        </div>
+
+        <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-5 shadow-sm">
+          <div class="flex items-center justify-between gap-2">
+            <p class="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Total versé</p>
+            <span id="kpi-cap-badge" class="hidden text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 dark:bg-amber-900/50 dark:text-amber-300">Plafond 150 k€</span>
+          </div>
+          <p id="kpi-invested" class="text-2xl sm:text-3xl font-extrabold text-slate-800 dark:text-slate-100 mt-1.5 tracking-tight">0 €</p>
+          <p id="kpi-cap-progress" class="text-xs text-slate-500 dark:text-slate-400 mt-1">0% du plafond PEA (150 000 €)</p>
+        </div>
+
+        <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-5 shadow-sm">
+          <p class="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">Plus-values brutes</p>
+          <p id="kpi-gains" class="text-2xl sm:text-3xl font-extrabold text-emerald-600 dark:text-emerald-400 mt-1.5 tracking-tight">+0 €</p>
+          <p id="kpi-gains-share" class="text-xs text-slate-500 dark:text-slate-400 mt-1">0% du capital final</p>
+        </div>
+
+        <div class="bg-emerald-600 dark:bg-emerald-700 text-white rounded-2xl p-5 shadow-sm shadow-emerald-600/20">
+          <div class="flex items-center justify-between gap-2">
+            <p class="text-xs font-semibold uppercase tracking-wider text-emerald-100">Capital net PEA</p>
+            <span id="kpi-tax-rate-label" class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-white/20 text-white">PS 17,2%</span>
+          </div>
+          <p id="kpi-net-pea" class="text-2xl sm:text-3xl font-extrabold mt-1.5 tracking-tight">0 €</p>
+          <p id="kpi-tax-saving" class="text-xs text-emerald-100 mt-1 font-medium">Économie vs CTO : +0 €</p>
+        </div>
+      </div>
+
+      <!-- Paramètres + Graphique -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+        <!-- Panneau des curseurs -->
+        <div class="lg:col-span-4 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-5 shadow-sm space-y-5">
+          <div class="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
+            <h3 class="text-base font-bold text-slate-900 dark:text-white">Paramètres</h3>
+            <button onclick="applySimulatorToPlan()" class="text-[11px] font-semibold text-emerald-600 dark:text-emerald-400 hover:underline">
+              Appliquer à Mon Plan
+            </button>
+          </div>
+
+          <!-- Curseur 1 : Apport initial -->
+          <div class="space-y-2">
+            <div class="flex items-center justify-between text-sm">
+              <label for="sim-initial" class="font-medium text-slate-700 dark:text-slate-300">Apport initial</label>
+              <span id="sim-initial-val" class="font-bold text-slate-900 dark:text-white">2 800 €</span>
+            </div>
+            <input type="range" id="sim-initial" min="0" max="50000" step="100" value="2800" oninput="updateSimulator()" class="w-full" />
+            <div class="flex justify-between text-[11px] text-slate-400">
+              <span>0 €</span>
+              <span>25 000 €</span>
+              <span>50 000 €</span>
+            </div>
+          </div>
+
+          <!-- Curseur 2 : Versement mensuel -->
+          <div class="space-y-2">
+            <div class="flex items-center justify-between text-sm">
+              <label for="sim-monthly" class="font-medium text-slate-700 dark:text-slate-300">Versement mensuel</label>
+              <span id="sim-monthly-val" class="font-bold text-slate-900 dark:text-white">200 €</span>
+            </div>
+            <input type="range" id="sim-monthly" min="0" max="1000" step="10" value="200" oninput="updateSimulator()" class="w-full" />
+            <div class="flex justify-between text-[11px] text-slate-400">
+              <span>0 €</span>
+              <span>500 €</span>
+              <span>1 000 €</span>
+            </div>
+          </div>
+
+          <!-- Curseur 3 : Horizon -->
+          <div class="space-y-2">
+            <div class="flex items-center justify-between text-sm">
+              <label for="sim-years" class="font-medium text-slate-700 dark:text-slate-300">Horizon de placement</label>
+              <span id="sim-years-val" class="font-bold text-slate-900 dark:text-white">15 ans</span>
+            </div>
+            <input type="range" id="sim-years" min="1" max="30" step="1" value="15" oninput="updateSimulator()" class="w-full" />
+            <div class="flex justify-between text-[11px] text-slate-400">
+              <span>1 an</span>
+              <span>15 ans</span>
+              <span>30 ans</span>
+            </div>
+          </div>
+
+          <!-- Curseur 4 : Rendement annuel -->
+          <div class="space-y-2">
+            <div class="flex items-center justify-between text-sm">
+              <label for="sim-rate" class="font-medium text-slate-700 dark:text-slate-300">Rendement annuel estimé</label>
+              <span id="sim-rate-val" class="font-bold text-emerald-600 dark:text-emerald-400">7,0 %</span>
+            </div>
+            <input type="range" id="sim-rate" min="2" max="12" step="0.5" value="7" oninput="updateSimulator()" class="w-full" />
+            <div class="flex justify-between text-[11px] text-slate-400">
+              <span>2% (Prudent)</span>
+              <span>7% (Historique)</span>
+              <span>12% (Dynamique)</span>
+            </div>
+          </div>
+
+          <!-- Comparatif fiscal PEA vs CTO -->
+          <div class="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-800/70 border border-slate-200/70 dark:border-slate-700/60 space-y-2 text-xs">
+            <p class="font-bold text-slate-800 dark:text-slate-200">Comparatif fiscal net en sortie</p>
+            <div class="flex justify-between text-slate-600 dark:text-slate-400">
+              <span>Net PEA (<span id="comp-pea-rate">17,2%</span>) :</span>
+              <span id="comp-pea-net" class="font-bold text-slate-900 dark:text-white">0 €</span>
+            </div>
+            <div class="flex justify-between text-slate-600 dark:text-slate-400">
+              <span>Net CTO (PFU 30%) :</span>
+              <span id="comp-cto-net" class="font-semibold text-slate-700 dark:text-slate-300">0 €</span>
+            </div>
+            <div class="flex justify-between pt-1.5 border-t border-slate-200 dark:border-slate-700 text-emerald-700 dark:text-emerald-400 font-bold">
+              <span>Gain fiscal grâce au PEA :</span>
+              <span id="comp-saving">+0 €</span>
+            </div>
+            <p id="sim-under5-note" class="hidden text-[11px] text-amber-600 dark:text-amber-400 pt-1">
+              Avant 5 ans, un retrait du PEA entraîne sa clôture et une imposition au PFU de 30 % (identique au CTO).
+            </p>
+          </div>
+        </div>
+
+        <!-- Graphique d'évolution -->
+        <div class="lg:col-span-8 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-5 shadow-sm">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4">
+            <div>
+              <h3 class="text-base font-bold text-slate-900 dark:text-white">
+                Croissance du capital année par année
+              </h3>
+              <p class="text-xs text-slate-500 dark:text-slate-400">
+                Cumul des versements (apport initial inclus, plafonné à 150 000 €) vs valeur totale du PEA
+              </p>
+            </div>
+            <div id="sim-cap-notice" class="hidden text-xs font-medium px-2.5 py-1 rounded-lg bg-amber-50 dark:bg-amber-950/50 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-800/60">
+              Plafond 150 k€ atteint à l'année <span id="sim-cap-year"></span>
+            </div>
+          </div>
+
+          <div class="relative h-72 sm:h-96 w-full">
+            <canvas id="simulatorChart"></canvas>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ==================== BARRE DE NAVIGATION MOBILE (BAS) ==================== -->
+  <nav class="md:hidden fixed bottom-0 inset-x-0 z-40 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-t border-slate-200 dark:border-slate-800 px-2 py-1.5" aria-label="Navigation mobile">
+    <div class="grid grid-cols-3 gap-1 max-w-md mx-auto">
+      <button onclick="switchTab('catalog')" id="nav-mobile-catalog" class="nav-tab-mobile flex flex-col items-center justify-center py-2 px-1 rounded-xl text-[11px] font-semibold transition-colors">
+        <svg class="w-5 h-5 mb-0.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+        </svg>
+        Sélection PEA
+      </button>
+
+      <button onclick="switchTab('plan')" id="nav-mobile-plan" class="nav-tab-mobile relative flex flex-col items-center justify-center py-2 px-1 rounded-xl text-[11px] font-semibold transition-colors">
+        <span id="plan-count-badge-mobile" class="absolute top-1 right-4 px-1.5 text-[10px] font-bold rounded-full bg-emerald-600 text-white">0</span>
+        <svg class="w-5 h-5 mb-0.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z" />
+          <path stroke-linecap="round" stroke-linejoin="round" d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z" />
+        </svg>
+        Mon Plan
+      </button>
+
+      <button onclick="switchTab('simulator')" id="nav-mobile-simulator" class="nav-tab-mobile flex flex-col items-center justify-center py-2 px-1 rounded-xl text-[11px] font-semibold transition-colors">
+        <svg class="w-5 h-5 mb-0.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+        </svg>
+        Simulateur
+      </button>
+    </div>
+  </nav>
+
+  <!-- ==================== MODALE DE RÉINITIALISATION ==================== -->
+  <div id="reset-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm">
+    <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 max-w-sm w-full p-6 shadow-2xl space-y-4">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-rose-50 dark:bg-rose-950/50 text-rose-600 dark:text-rose-400 flex items-center justify-center shrink-0">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+          </svg>
+        </div>
+        <div>
+          <h3 class="text-base font-bold text-slate-900 dark:text-white">Réinitialiser l'application ?</h3>
+          <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+            Vos montants (2 800 € + 200 €/mois), prix indicatifs et pondérations reviendront aux valeurs par défaut.
+          </p>
+        </div>
+      </div>
+      <div class="flex items-center justify-end gap-2 pt-2">
+        <button onclick="closeResetModal()" class="px-4 py-2 text-xs font-semibold rounded-xl border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition">
+          Annuler
+        </button>
+        <button onclick="confirmResetApp()" class="px-4 py-2 text-xs font-semibold rounded-xl bg-rose-600 text-white hover:bg-rose-700 transition shadow-sm">
+          Oui, réinitialiser
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== NOTIFICATION TOAST ==================== -->
+  <div id="toast-container" class="fixed bottom-20 md:bottom-6 left-1/2 -translate-x-1/2 z-50 pointer-events-none"></div>
+
+  <!-- ==================== LOGIQUE JAVASCRIPT ==================== -->
+  <script>
+    /**
+     * Catalogue des 12 actifs éligibles au PEA (4 ETF + 8 Actions européennes)
+     */
+    const DEFAULT_ASSETS = [
+      {
+        id: 'WPEA',
+        name: 'iShares MSCI World Swap PEA',
+        ticker: 'WPEA',
+        isin: 'IE0002XZSHO1',
+        category: 'ETF',
+        sector: 'Monde (~1 400 sociétés)',
+        price: 5.50,
+        dividend: 0.0,
+        dividendNote: 'Capitalisant',
+        risk: 'Modéré',
+        thesis: 'Exposition mondiale large éligible au PEA avec un prix de part très accessible (~5,50 €), idéal pour investir chaque euro dès le Jour 1 et chaque mois.'
+      },
+      {
+        id: 'ESE',
+        name: 'BNP Paribas Easy S&P 500 PEA',
+        ticker: 'ESE',
+        isin: 'FR0011550185',
+        category: 'ETF',
+        sector: 'Actions USA (500 sociétés)',
+        price: 27.00,
+        dividend: 0.0,
+        dividendNote: 'Capitalisant',
+        risk: 'Modéré',
+        thesis: 'Réplique les 500 plus grandes entreprises américaines via une réplication synthétique éligible PEA, avec frais réduits et prix unitaire abordable.'
+      },
+      {
+        id: 'PUST',
+        name: 'Amundi PEA Nasdaq-100',
+        ticker: 'PUST',
+        isin: 'FR0011871110',
+        category: 'ETF',
+        sector: 'Technologie & Croissance USA',
+        price: 78.00,
+        dividend: 0.0,
+        dividendNote: 'Capitalisant',
+        risk: 'Dynamique',
+        thesis: 'Cible les 100 plus grandes valeurs technologiques et innovantes américaines. Plus volatil, souvent utilisé en complément d’un ETF Monde.'
+      },
+      {
+        id: 'C50',
+        name: 'Amundi Euro Stoxx 50 PEA',
+        ticker: 'C50',
+        isin: 'LU1681047236',
+        category: 'ETF',
+        sector: 'Zone Euro (50 leaders)',
+        price: 125.00,
+        dividend: 0.0,
+        dividendNote: 'Capitalisant',
+        risk: 'Modéré',
+        thesis: 'Regroupe les 50 plus grandes capitalisations de la zone euro (ASML, LVMH, SAP, TotalEnergies, Air Liquide…) en un seul ordre.'
+      },
+      {
+        id: 'AI.PA',
+        name: 'Air Liquide',
+        ticker: 'AI.PA',
+        isin: 'FR0000120073',
+        category: 'Action',
+        sector: 'Industrie / Gaz',
+        price: 165.00,
+        dividend: 2.0,
+        dividendNote: 'Distribué',
+        risk: 'Modéré',
+        thesis: 'Valeur phare du PEA : croissance régulière dans les gaz industriels et médicaux, prime de fidélité au nominatif et attribution régulière d’actions gratuites.'
+      },
+      {
+        id: 'TTE.PA',
+        name: 'TotalEnergies',
+        ticker: 'TTE.PA',
+        isin: 'FR0000120271',
+        category: 'Action',
+        sector: 'Énergie',
+        price: 60.00,
+        dividend: 5.3,
+        dividendNote: 'Trimestriel',
+        risk: 'Modéré',
+        thesis: 'Forte génération de cash-flow et dividende trimestriel élevé, avec un prix unitaire facilitant les achats mensuels réguliers.'
+      },
+      {
+        id: 'SU.PA',
+        name: 'Schneider Electric',
+        ticker: 'SU.PA',
+        isin: 'FR0000121972',
+        category: 'Action',
+        sector: 'Transition énergétique',
+        price: 235.00,
+        dividend: 1.5,
+        dividendNote: 'Distribué',
+        risk: 'Dynamique',
+        thesis: 'Leader mondial de la gestion de l’énergie et de l’automatisation, soutenu par l’électrification des infrastructures et les data centers.'
+      },
+      {
+        id: 'MC.PA',
+        name: 'LVMH',
+        ticker: 'MC.PA',
+        isin: 'FR0000121014',
+        category: 'Action',
+        sector: 'Luxe',
+        price: 630.00,
+        dividend: 2.1,
+        dividendNote: 'Distribué',
+        risk: 'Dynamique',
+        thesis: 'Numéro un mondial du luxe. Accessible dès le Jour 1 grâce à l’apport de 2 800 €, mais nécessite un cumul sur plusieurs mois pour le DCA mensuel.'
+      },
+      {
+        id: 'OR.PA',
+        name: "L'Oréal",
+        ticker: 'OR.PA',
+        isin: 'FR0000120321',
+        category: 'Action',
+        sector: 'Cosmétiques',
+        price: 360.00,
+        dividend: 1.9,
+        dividendNote: 'Distribué',
+        risk: 'Modéré',
+        thesis: 'Leader mondial de la beauté avec des marges solides et un dividende en hausse régulière. Facile à intégrer dans l’apport initial de 2 800 €.'
+      },
+      {
+        id: 'SAN.PA',
+        name: 'Sanofi',
+        ticker: 'SAN.PA',
+        isin: 'FR0000120578',
+        category: 'Action',
+        sector: 'Santé / Pharma',
+        price: 95.00,
+        dividend: 3.9,
+        dividendNote: 'Distribué',
+        risk: 'Défensif',
+        thesis: 'Valeur pharmaceutique défensive appréciée pour la stabilité de son dividende et ses franchises clés en immunologie et vaccins.'
+      },
+      {
+        id: 'ASML.AS',
+        name: 'ASML Holding',
+        ticker: 'ASML.AS',
+        isin: 'NL0010273215',
+        category: 'Action',
+        sector: 'Semi-conducteurs (Pays-Bas)',
+        price: 680.00,
+        dividend: 0.9,
+        dividendNote: 'Distribué',
+        risk: 'Dynamique',
+        thesis: 'Quasi-monopole mondial sur les machines de lithographie EUV essentielles aux puces avancées. Éligible PEA (Pays-Bas).'
+      },
+      {
+        id: 'DG.PA',
+        name: 'Vinci',
+        ticker: 'DG.PA',
+        isin: 'FR0000125486',
+        category: 'Action',
+        sector: 'Infrastructures & Concessions',
+        price: 108.00,
+        dividend: 4.2,
+        dividendNote: 'Distribué',
+        risk: 'Défensif',
+        thesis: 'Modèle résilient adossé aux concessions (autoroutes, aéroports) et aux services à l’énergie, offrant un bon équilibre rendement / visibilité.'
+      }
+    ];
+
+    const CHART_COLORS = [
+      '#059669', '#0f172a', '#0ea5e9', '#8b5cf6', '#f59e0b',
+      '#ec4899', '#14b8a6', '#6366f1', '#ef4444', '#84cc16',
+      '#0284c7', '#d97706'
+    ];
+
+    const STORAGE_KEY = 'mon_plan_pea_v2_initial2800';
+    const PEA_CAP = 150000;
+
+    function getDefaultState() {
+      return {
+        activeTab: 'plan',
+        categoryFilter: 'all',
+        planView: 'both', // 'both' | 'initial' | 'monthly'
+        darkMode: false,
+        initialCapital: 2800,
+        monthlyBudget: 200,
+        customPrices: {},
+        plan: [
+          { id: 'WPEA', weight: 70 },
+          { id: 'AI.PA', weight: 15 },
+          { id: 'TTE.PA', weight: 15 }
+        ],
+        simulator: {
+          initial: 2800,
+          monthly: 200,
+          years: 15,
+          rate: 7.0
+        }
+      };
+    }
+
+    let state = getDefaultState();
+    let allocationChartInstance = null;
+    let simulatorChartInstance = null;
+
+    /* =====================================================================
+     * FORMATAGE, PERSISTANCE & NOTIFICATIONS
+     * ===================================================================== */
+    const formatEuro = (val, decimals = 2) => {
+      return new Intl.NumberFormat('fr-FR', {
+        style: 'currency',
+        currency: 'EUR',
+        minimumFractionDigits: decimals,
+        maximumFractionDigits: decimals
+      }).format(val);
+    };
+
+    const formatEuroInt = (val) => formatEuro(Math.round(val), 0);
+
+    function getAssetById(id) {
+      return DEFAULT_ASSETS.find(a => a.id === id);
+    }
+
+    function getAssetPrice(id) {
+      if (state.customPrices[id] !== undefined && !isNaN(state.customPrices[id]) && state.customPrices[id] > 0) {
+        return Number(state.customPrices[id]);
+      }
+      const asset = getAssetById(id);
+      return asset ? asset.price : 0;
+    }
+
+    function saveState() {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify({
+          darkMode: state.darkMode,
+          planView: state.planView,
+          initialCapital: state.initialCapital,
+          monthlyBudget: state.monthlyBudget,
+          customPrices: state.customPrices,
+          plan: state.plan,
+          simulator: state.simulator
+        }));
+      } catch (e) {
+        // Ignore si localStorage indisponible
+      }
+    }
+
+    function loadState() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (!raw) return;
+        const parsed = JSON.parse(raw);
+        if (typeof parsed.darkMode === 'boolean') state.darkMode = parsed.darkMode;
+        if (['both', 'initial', 'monthly'].includes(parsed.planView)) state.planView = parsed.planView;
+        if (typeof parsed.initialCapital === 'number' && parsed.initialCapital >= 0) {
+          state.initialCapital = parsed.initialCapital;
+        }
+        if (typeof parsed.monthlyBudget === 'number' && parsed.monthlyBudget >= 0) {
+          state.monthlyBudget = parsed.monthlyBudget;
+        }
+        if (parsed.customPrices && typeof parsed.customPrices === 'object') {
+          state.customPrices = parsed.customPrices;
+        }
+        if (Array.isArray(parsed.plan)) {
+          state.plan = parsed.plan.filter(item => getAssetById(item.id));
+        }
+        if (parsed.simulator && typeof parsed.simulator === 'object') {
+          state.simulator = { ...state.simulator, ...parsed.simulator };
+        }
+      } catch (e) {
+        console.warn('Chargement localStorage ignoré:', e);
+      }
+    }
+
+    let toastTimeout = null;
+    function showToast(message) {
+      const container = document.getElementById('toast-container');
+      container.innerHTML = `
+        <div class="toast-anim bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900 text-xs sm:text-sm font-medium px-4 py-2.5 rounded-xl shadow-lg flex items-center gap-2 whitespace-nowrap">
+          <span class="w-2 h-2 rounded-full bg-emerald-400 dark:bg-emerald-600"></span>
+          <span>${message}</span>
+        </div>
+      `;
+      clearTimeout(toastTimeout);
+      toastTimeout = setTimeout(() => { container.innerHTML = ''; }, 2400);
+    }
+
+    /* =====================================================================
+     * RÉINITIALISATION (MODALE CUSTOM SANS CONFIRM())
+     * ===================================================================== */
+    function openResetModal() {
+      document.getElementById('reset-modal').classList.remove('hidden');
+    }
+
+    function closeResetModal() {
+      document.getElementById('reset-modal').classList.add('hidden');
+    }
+
+    function confirmResetApp() {
+      try { localStorage.removeItem(STORAGE_KEY); } catch (e) {}
+      const keepDark = state.darkMode;
+      const keepTab = state.activeTab;
+      state = getDefaultState();
+      state.darkMode = keepDark;
+      state.activeTab = keepTab;
+
+      syncSimulatorSlidersFromState();
+      updateHeaderAndBadges();
+      setPlanView(state.planView);
+      setCategoryFilter('all');
+      switchTab(state.activeTab);
+      closeResetModal();
+      showToast('Paramètres réinitialisés (2 800 € + 200 €/mois)');
+    }
+
+    /* =====================================================================
+     * THÈME SOMBRE & NAVIGATION
+     * ===================================================================== */
+    function applyDarkMode() {
+      document.documentElement.classList.toggle('dark', state.darkMode);
+      if (state.activeTab === 'plan') renderAllocationChart();
+      if (state.activeTab === 'simulator') updateSimulator();
+    }
+
+    function toggleDarkMode() {
+      state.darkMode = !state.darkMode;
+      saveState();
+      applyDarkMode();
+    }
+
+    function switchTab(tabId) {
+      state.activeTab = tabId;
+
+      ['catalog', 'plan', 'simulator'].forEach(t => {
+        document.getElementById(`tab-${t}`).classList.toggle('hidden', t !== tabId);
+
+        const dBtn = document.getElementById(`nav-desktop-${t}`);
+        if (dBtn) {
+          dBtn.className = t === tabId
+            ? 'nav-tab-desktop px-4 py-2 text-sm font-semibold rounded-lg transition-all flex items-center gap-2 bg-white dark:bg-slate-900 text-emerald-700 dark:text-emerald-400 shadow-sm'
+            : 'nav-tab-desktop px-4 py-2 text-sm font-semibold rounded-lg transition-all flex items-center gap-2 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white';
+        }
+
+        const mBtn = document.getElementById(`nav-mobile-${t}`);
+        if (mBtn) {
+          mBtn.className = t === tabId
+            ? 'nav-tab-mobile relative flex flex-col items-center justify-center py-2 px-1 rounded-xl text-[11px] font-bold transition-colors text-emerald-600 dark:text-emerald-400 bg-emerald-50/80 dark:bg-emerald-950/50'
+            : 'nav-tab-mobile relative flex flex-col items-center justify-center py-2 px-1 rounded-xl text-[11px] font-semibold transition-colors text-slate-500 dark:text-slate-400';
+        }
+      });
+
+      if (tabId === 'catalog') renderCatalog();
+      else if (tabId === 'plan') renderPlan();
+      else if (tabId === 'simulator') updateSimulator();
+
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function updateHeaderAndBadges() {
+      const count = state.plan.length;
+      const initStr = formatEuroInt(state.initialCapital);
+      const monthStr = formatEuroInt(state.monthlyBudget);
+
+      document.getElementById('plan-count-badge-desktop').textContent = count;
+      document.getElementById('plan-count-badge-mobile').textContent = count;
+      document.getElementById('header-subtitle').textContent = `${initStr} au départ + ${monthStr}/mois`;
+      document.getElementById('nav-plan-label-desktop').textContent = `Mon Plan (${initStr} + ${monthStr}/m)`;
+      document.getElementById('catalog-initial-display').textContent = initStr;
+      document.getElementById('catalog-budget-display').textContent = `${monthStr}/mois`;
+    }
+
+    /* =====================================================================
+     * ONGLET 1 : SÉLECTION PEA
+     * ===================================================================== */
+    function setCategoryFilter(filter) {
+      state.categoryFilter = filter;
+      document.querySelectorAll('.cat-filter-btn').forEach(btn => {
+        const isActive = btn.dataset.filter === filter;
+        btn.className = isActive
+          ? 'cat-filter-btn px-3.5 py-2 text-xs sm:text-sm font-semibold rounded-xl transition-all bg-slate-900 dark:bg-emerald-600 text-white shadow-sm'
+          : 'cat-filter-btn px-3.5 py-2 text-xs sm:text-sm font-semibold rounded-xl transition-all bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700';
+      });
+      renderCatalog();
+    }
+
+    function getRiskBadgeClass(risk) {
+      if (risk === 'Défensif') return 'bg-sky-50 text-sky-700 dark:bg-sky-950/60 dark:text-sky-300 border-sky-200/70 dark:border-sky-800/60';
+      if (risk === 'Dynamique') return 'bg-amber-50 text-amber-700 dark:bg-amber-950/60 dark:text-amber-300 border-amber-200/70 dark:border-amber-800/60';
+      return 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300 border-emerald-200/70 dark:border-emerald-800/60';
+    }
+
+    function updateAssetPrice(id, newVal) {
+      const parsed = parseFloat(newVal);
+      if (!isNaN(parsed) && parsed > 0) {
+        state.customPrices[id] = parsed;
+        saveState();
+        if (state.activeTab === 'catalog') renderCatalog();
+        else if (state.activeTab === 'plan') renderPlan();
+      }
+    }
+
+    function toggleAssetInPlan(id) {
+      const exists = state.plan.find(item => item.id === id);
+      const asset = getAssetById(id);
+
+      if (exists) {
+        state.plan = state.plan.filter(item => item.id !== id);
+        showToast(`${asset.name} retiré de votre plan`);
+      } else {
+        const currentTotal = state.plan.reduce((acc, i) => acc + i.weight, 0);
+        const remaining = Math.max(0, 100 - currentTotal);
+        const newWeight = state.plan.length === 0 ? 100 : (remaining > 0 ? remaining : 10);
+        state.plan.push({ id, weight: newWeight });
+        showToast(`${asset.name} ajouté à votre plan`);
+      }
+
+      saveState();
+      updateHeaderAndBadges();
+      renderCatalog();
+    }
+
+    function renderCatalog() {
+      const grid = document.getElementById('catalog-grid');
+      const search = (document.getElementById('catalog-search').value || '').trim().toLowerCase();
+
+      const filtered = DEFAULT_ASSETS.filter(asset => {
+        const price = getAssetPrice(asset.id);
+        let matchesCat = true;
+        if (state.categoryFilter === 'ETF') matchesCat = asset.category === 'ETF';
+        else if (state.categoryFilter === 'Action') matchesCat = asset.category === 'Action';
+        else if (state.categoryFilter === 'affordable') matchesCat = price < 200;
+
+        const matchesSearch = !search ||
+          asset.name.toLowerCase().includes(search) ||
+          asset.ticker.toLowerCase().includes(search) ||
+          asset.isin.toLowerCase().includes(search) ||
+          asset.sector.toLowerCase().includes(search);
+
+        return matchesCat && matchesSearch;
+      });
+
+      if (filtered.length === 0) {
+        grid.innerHTML = `
+          <div class="col-span-full bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-10 text-center">
+            <p class="text-sm font-semibold text-slate-700 dark:text-slate-300">Aucun actif ne correspond à votre recherche.</p>
+            <button onclick="resetCatalogFilters()" class="mt-3 text-xs font-semibold text-emerald-600 dark:text-emerald-400 hover:underline">
+              Afficher les 12 actifs
+            </button>
+          </div>
+        `;
+        return;
+      }
+
+      grid.innerHTML = filtered.map(asset => {
+        const price = getAssetPrice(asset.id);
+        const isInPlan = state.plan.some(p => p.id === asset.id);
+        const isAffordable = price < 200;
+        const monthsToBuy = state.monthlyBudget > 0 ? Math.ceil(price / state.monthlyBudget) : 0;
+
+        return `
+          <article class="bg-white dark:bg-slate-900 rounded-2xl border ${isInPlan ? 'border-emerald-500/70 ring-1 ring-emerald-500/20' : 'border-slate-200 dark:border-slate-800'} p-5 shadow-sm hover:shadow-md transition-all flex flex-col justify-between gap-4">
+            <div class="space-y-3.5">
+              <div class="flex items-start justify-between gap-2">
+                <div class="min-w-0">
+                  <div class="flex items-center gap-1.5 flex-wrap">
+                    <span class="px-2 py-0.5 text-[11px] font-bold rounded-md bg-slate-900 dark:bg-slate-800 text-white tracking-wide">${asset.ticker}</span>
+                    <span class="px-2 py-0.5 text-[10px] font-semibold rounded-md ${asset.category === 'ETF' ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950/70 dark:text-emerald-300' : 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300'}">${asset.category}</span>
+                    <span class="text-[10px] font-mono text-slate-400">${asset.isin}</span>
+                  </div>
+                  <h3 class="text-base font-bold text-slate-900 dark:text-white mt-1.5 leading-snug">${asset.name}</h3>
+                  <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">${asset.sector}</p>
+                </div>
+                <span class="shrink-0 px-2.5 py-1 text-[11px] font-semibold rounded-lg border ${getRiskBadgeClass(asset.risk)}">
+                  ${asset.risk}
+                </span>
+              </div>
+
+              <!-- Prix éditable & Dividende -->
+              <div class="grid grid-cols-2 gap-2.5 bg-slate-50 dark:bg-slate-800/60 p-3 rounded-xl border border-slate-100 dark:border-slate-800">
+                <div>
+                  <span class="block text-[11px] text-slate-500 dark:text-slate-400">Prix indicatif (éditable)</span>
+                  <div class="flex items-center gap-1 mt-0.5">
+                    <input
+                      type="number"
+                      step="0.1"
+                      min="0.1"
+                      value="${price}"
+                      onchange="updateAssetPrice('${asset.id}', this.value)"
+                      aria-label="Prix indicatif de ${asset.name}"
+                      class="w-20 px-1.5 py-0.5 text-sm font-bold rounded-md bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500/40"
+                    />
+                    <span class="text-xs font-bold text-slate-500">€</span>
+                  </div>
+                </div>
+                <div>
+                  <span class="block text-[11px] text-slate-500 dark:text-slate-400">Dividende indicatif</span>
+                  <p class="text-sm font-bold text-slate-900 dark:text-white mt-1">
+                    ${asset.dividend > 0 ? '~' + asset.dividend.toFixed(1).replace('.', ',') + ' %' : '0 %'}
+                    <span class="text-[10px] font-medium text-slate-400 block leading-tight">${asset.dividendNote}</span>
+                  </p>
+                </div>
+              </div>
+
+              <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">${asset.thesis}</p>
+            </div>
+
+            <div class="pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between gap-2">
+              ${isAffordable
+                ? `<span class="inline-flex items-center gap-1.5 text-[11px] font-semibold text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/60 px-2.5 py-1 rounded-lg">
+                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                    &lt; 200 € / part
+                  </span>`
+                : `<span class="inline-flex items-center gap-1.5 text-[11px] font-semibold text-amber-700 dark:text-amber-300 bg-amber-50 dark:bg-amber-950/60 px-2.5 py-1 rounded-lg" title="Accessible avec l'apport initial ; en mensuel, nécessite un cumul sur plusieurs mois">
+                    <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
+                    ${monthsToBuy > 0 ? `Cumul ~${monthsToBuy} mois` : '> 200 € / part'}
+                  </span>`
+              }
+
+              <button
+                onclick="toggleAssetInPlan('${asset.id}')"
+                class="px-3.5 py-2 rounded-xl text-xs font-semibold transition-all flex items-center gap-1.5 ${
+                  isInPlan
+                    ? 'bg-emerald-600 text-white hover:bg-emerald-700 shadow-sm'
+                    : 'bg-slate-900 dark:bg-slate-800 text-white hover:bg-emerald-600 dark:hover:bg-emerald-600'
+                }"
+              >
+                ${isInPlan
+                  ? `<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" /></svg> Dans mon plan`
+                  : `+ Ajouter au plan`
+                }
+              </button>
+            </div>
+          </article>
+        `;
+      }).join('');
+    }
+
+    function resetCatalogFilters() {
+      document.getElementById('catalog-search').value = '';
+      setCategoryFilter('all');
+    }
+
+    /* =====================================================================
+     * ONGLET 2 : MON PLAN (APPORT INITIAL + MENSUEL)
+     * ===================================================================== */
+    function handleInitialChange(val) {
+      const parsed = parseFloat(val);
+      if (!isNaN(parsed) && parsed >= 0) {
+        state.initialCapital = Math.min(PEA_CAP, parsed);
+        // Synchronisation automatique avec le simulateur
+        state.simulator.initial = Math.min(50000, Math.round(state.initialCapital / 100) * 100);
+        document.getElementById('sim-initial').value = state.simulator.initial;
+        saveState();
+        updateHeaderAndBadges();
+        renderPlan();
+      }
+    }
+
+    function handleBudgetChange(val) {
+      const parsed = parseFloat(val);
+      if (!isNaN(parsed) && parsed >= 0) {
+        state.monthlyBudget = Math.min(10000, parsed);
+        // Synchronisation automatique avec le simulateur
+        state.simulator.monthly = Math.min(1000, Math.round(state.monthlyBudget / 10) * 10);
+        document.getElementById('sim-monthly').value = state.simulator.monthly;
+        saveState();
+        updateHeaderAndBadges();
+        renderPlan();
+      }
+    }
+
+    function setPlanView(view) {
+      state.planView = view;
+      saveState();
+
+      ['both', 'initial', 'monthly'].forEach(v => {
+        const btn = document.getElementById(`view-btn-${v}`);
+        if (btn) {
+          btn.className = v === view
+            ? 'plan-view-btn px-3 py-1.5 text-xs font-semibold rounded-lg transition-all bg-white dark:bg-slate-900 text-emerald-700 dark:text-emerald-400 shadow-sm'
+            : 'plan-view-btn px-3 py-1.5 text-xs font-semibold rounded-lg transition-all text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white';
+        }
+      });
+
+      const initBlock = document.getElementById('block-initial-orders');
+      const monthBlock = document.getElementById('block-monthly-orders');
+      if (initBlock && monthBlock) {
+        initBlock.classList.toggle('hidden', view === 'monthly');
+        monthBlock.classList.toggle('hidden', view === 'initial');
+      }
+    }
+
+    function applyPreset(presetKey) {
+      if (presetKey === 'world') {
+        state.plan = [{ id: 'WPEA', weight: 100 }];
+        showToast('Stratégie "100% ETF Monde" appliquée');
+      } else if (presetKey === 'core_fr') {
+        state.plan = [
+          { id: 'WPEA', weight: 70 },
+          { id: 'AI.PA', weight: 15 },
+          { id: 'TTE.PA', weight: 15 }
+        ];
+        showToast('Stratégie "Cœur ETF + Actions FR" appliquée');
+      } else if (presetKey === 'dividends') {
+        state.plan = [
+          { id: 'TTE.PA', weight: 35 },
+          { id: 'DG.PA', weight: 35 },
+          { id: 'SAN.PA', weight: 30 }
+        ];
+        showToast('Stratégie "Actions à Dividendes" appliquée');
+      }
+      saveState();
+      updateHeaderAndBadges();
+      renderPlan();
+    }
+
+    function updateItemWeight(id, newWeight) {
+      const item = state.plan.find(p => p.id === id);
+      if (item) {
+        item.weight = Math.max(0, Math.min(100, Math.round(Number(newWeight))));
+        saveState();
+        renderPlan();
+      }
+    }
+
+    function removeItemFromPlan(id) {
+      const asset = getAssetById(id);
+      state.plan = state.plan.filter(p => p.id !== id);
+      saveState();
+      updateHeaderAndBadges();
+      renderPlan();
+      if (asset) showToast(`${asset.name} retiré du plan`);
+    }
+
+    function balanceWeightsTo100() {
+      if (state.plan.length === 0) return;
+      const total = state.plan.reduce((sum, i) => sum + i.weight, 0);
+
+      if (total === 0) {
+        const equal = Math.floor(100 / state.plan.length);
+        state.plan.forEach((item, idx) => {
+          item.weight = idx === 0 ? 100 - equal * (state.plan.length - 1) : equal;
+        });
+      } else {
+        let running = 0;
+        state.plan.forEach((item, idx) => {
+          if (idx === state.plan.length - 1) {
+            item.weight = Math.max(0, 100 - running);
+          } else {
+            const scaled = Math.round((item.weight / total) * 100);
+            item.weight = scaled;
+            running += scaled;
+          }
+        });
+      }
+
+      saveState();
+      renderPlan();
+      showToast('Pondérations équilibrées à 100 %');
+    }
+
+    function renderPlan() {
+      const initInput = document.getElementById('initial-capital-input');
+      const budgetInput = document.getElementById('monthly-budget-input');
+      if (document.activeElement !== initInput) initInput.value = state.initialCapital;
+      if (document.activeElement !== budgetInput) budgetInput.value = state.monthlyBudget;
+
+      document.getElementById('table-initial-title-val').textContent = formatEuroInt(state.initialCapital);
+      document.getElementById('table-monthly-title-val').textContent = formatEuroInt(state.monthlyBudget);
+
+      const totalWeight = state.plan.reduce((sum, i) => sum + i.weight, 0);
+      const statusText = document.getElementById('weight-status-text');
+      if (state.plan.length === 0) {
+        statusText.innerHTML = `<span class="text-slate-500">Aucun actif sélectionné</span>`;
+      } else if (totalWeight === 100) {
+        statusText.innerHTML = `<span class="text-emerald-600 dark:text-emerald-400 font-semibold">Total des pondérations : 100 % (équilibré)</span>`;
+      } else {
+        statusText.innerHTML = `<span class="text-amber-600 dark:text-amber-400 font-semibold">Total actuel : ${totalWeight} % — cliquez sur « Équilibrer à 100% »</span>`;
+      }
+
+      const weightsContainer = document.getElementById('plan-weights-container');
+      const tbodyInitial = document.getElementById('tbody-initial-orders');
+      const tbodyMonthly = document.getElementById('tbody-monthly-orders');
+
+      if (state.plan.length === 0) {
+        weightsContainer.innerHTML = `
+          <div class="py-8 text-center space-y-3">
+            <p class="text-sm font-semibold text-slate-700 dark:text-slate-300">Votre plan est vide.</p>
+            <p class="text-xs text-slate-500 dark:text-slate-400">Choisissez une stratégie pré-remplie ou ajoutez des actifs depuis le catalogue.</p>
+            <button onclick="switchTab('catalog')" class="px-4 py-2 text-xs font-semibold rounded-xl bg-emerald-600 text-white hover:bg-emerald-700 transition">
+              Parcourir la sélection PEA
+            </button>
+          </div>
+        `;
+        const emptyRow = `<tr><td colspan="6" class="py-6 text-center text-slate-400">Ajoutez au moins un actif pour générer les ordres.</td></tr>`;
+        tbodyInitial.innerHTML = emptyRow;
+        tbodyMonthly.innerHTML = emptyRow;
+        updatePlanSummaries(0, 0, 0, 0, 0);
+        renderAllocationChart();
+        return;
+      }
+
+      // 1. Rendu des curseurs de pondération
+      weightsContainer.innerHTML = state.plan.map((item, idx) => {
+        const asset = getAssetById(item.id);
+        const price = getAssetPrice(item.id);
+        const color = CHART_COLORS[idx % CHART_COLORS.length];
+
+        return `
+          <div class="py-3.5 space-y-2">
+            <div class="flex flex-wrap items-center justify-between gap-2">
+              <div class="flex items-center gap-2.5 min-w-0">
+                <span class="w-3 h-3 rounded-full shrink-0" style="background-color: ${color}"></span>
+                <div class="min-w-0">
+                  <div class="flex items-center gap-2 flex-wrap">
+                    <span class="font-bold text-sm text-slate-900 dark:text-white truncate">${asset.name}</span>
+                    <span class="text-[11px] font-semibold px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">${asset.ticker}</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="flex items-center gap-3">
+                <div class="flex items-center gap-1 text-xs">
+                  <span class="text-slate-400 hidden sm:inline">Cours :</span>
+                  <input
+                    type="number"
+                    step="0.1"
+                    min="0.1"
+                    value="${price}"
+                    onchange="updateAssetPrice('${item.id}', this.value)"
+                    aria-label="Prix de ${asset.name}"
+                    class="w-16 px-1.5 py-0.5 text-xs font-bold text-right rounded bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-emerald-500"
+                  />
+                  <span class="text-slate-400 font-semibold">€</span>
+                </div>
+
+                <span class="text-sm font-extrabold text-emerald-600 dark:text-emerald-400 w-11 text-right">${item.weight} %</span>
+
+                <button onclick="removeItemFromPlan('${item.id}')" title="Retirer de mon plan" class="p-1.5 rounded-lg text-slate-400 hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition-colors">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+
+            <input
+              type="range"
+              min="0"
+              max="100"
+              step="1"
+              value="${item.weight}"
+              oninput="updateItemWeight('${item.id}', this.value)"
+              class="w-full"
+            />
+          </div>
+        `;
+      }).join('');
+
+      // 2. Calculs & Rendu des deux tableaux (Initial & Mensuel)
+      let sumInitInvested = 0;
+      let sumInitFees = 0;
+      let sumMonthInvested = 0;
+      let sumMonthFees = 0;
+      let weightedDivSum = 0;
+
+      const initRows = [];
+      const monthRows = [];
+
+      state.plan.forEach((item, idx) => {
+        const asset = getAssetById(item.id);
+        const price = getAssetPrice(item.id);
+        const color = CHART_COLORS[idx % CHART_COLORS.length];
+        weightedDivSum += asset.dividend * item.weight;
+
+        // --- A. Calculs Apport Initial ---
+        const initTarget = (state.initialCapital * item.weight) / 100;
+        const initShares = price > 0 ? Math.floor(initTarget / price) : 0;
+        const initInvested = initShares * price;
+        const initFee = initInvested * 0.005;
+        const initRem = Math.max(0, initTarget - initInvested);
+
+        sumInitInvested += initInvested;
+        sumInitFees += initFee;
+
+        initRows.push(`
+          <tr class="hover:bg-slate-50/70 dark:hover:bg-slate-800/40 transition-colors">
+            <td class="py-2.5 px-3">
+              <div class="flex items-center gap-2">
+                <span class="w-2.5 h-2.5 rounded-full shrink-0" style="background-color: ${color}"></span>
+                <div>
+                  <span class="font-bold text-slate-900 dark:text-white block leading-tight">${asset.ticker}</span>
+                  <span class="text-[10px] text-slate-400">${item.weight}%</span>
+                </div>
+              </div>
+            </td>
+            <td class="py-2.5 px-3 text-right font-medium text-slate-700 dark:text-slate-300">${formatEuro(initTarget)}</td>
+            <td class="py-2.5 px-3 text-right">
+              ${initShares > 0
+                ? `<span class="font-extrabold text-emerald-600 dark:text-emerald-400">${initShares} part${initShares > 1 ? 's' : ''}</span>`
+                : `<span class="font-semibold text-amber-600 dark:text-amber-400">0 part</span>`
+              }
+            </td>
+            <td class="py-2.5 px-3 text-right font-bold text-slate-900 dark:text-white">${formatEuro(initInvested)}</td>
+            <td class="py-2.5 px-3 text-right text-slate-500 dark:text-slate-400">${formatEuro(initFee)}</td>
+            <td class="py-2.5 px-3 text-right font-medium text-slate-600 dark:text-slate-300">+${formatEuro(initRem)}</td>
+          </tr>
+        `);
+
+        // --- B. Calculs Mensuels (DCA) ---
+        const monthTarget = (state.monthlyBudget * item.weight) / 100;
+        const monthShares = price > 0 ? Math.floor(monthTarget / price) : 0;
+        const monthInvested = monthShares * price;
+        const monthFee = monthInvested * 0.005;
+        const monthRem = Math.max(0, monthTarget - monthInvested);
+        const monthsNeeded = monthTarget > 0 ? Math.ceil(price / monthTarget) : 0;
+
+        sumMonthInvested += monthInvested;
+        sumMonthFees += monthFee;
+
+        monthRows.push(`
+          <tr class="hover:bg-slate-50/70 dark:hover:bg-slate-800/40 transition-colors">
+            <td class="py-2.5 px-3">
+              <div class="flex items-center gap-2">
+                <span class="w-2.5 h-2.5 rounded-full shrink-0" style="background-color: ${color}"></span>
+                <div>
+                  <span class="font-bold text-slate-900 dark:text-white block leading-tight">${asset.ticker}</span>
+                  <span class="text-[10px] text-slate-400">${item.weight}%</span>
+                </div>
+              </div>
+            </td>
+            <td class="py-2.5 px-3 text-right font-medium text-slate-700 dark:text-slate-300">${formatEuro(monthTarget)}</td>
+            <td class="py-2.5 px-3 text-right">
+              ${monthShares > 0
+                ? `<span class="font-extrabold text-emerald-600 dark:text-emerald-400">${monthShares} part${monthShares > 1 ? 's' : ''}</span>`
+                : `<span class="font-semibold text-amber-600 dark:text-amber-400">0 part</span>`
+              }
+            </td>
+            <td class="py-2.5 px-3 text-right font-bold text-slate-900 dark:text-white">${formatEuro(monthInvested)}</td>
+            <td class="py-2.5 px-3 text-right text-slate-500 dark:text-slate-400">${formatEuro(monthFee)}</td>
+            <td class="py-2.5 px-3 text-right">
+              ${monthShares > 0
+                ? `<span class="font-medium text-slate-600 dark:text-slate-300">+${formatEuro(monthRem)}</span>`
+                : (monthTarget > 0
+                    ? `<span class="inline-block px-2 py-0.5 rounded-md bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 font-semibold">1 part / ${monthsNeeded} mois</span>`
+                    : `<span class="text-slate-400">—</span>`
+                  )
+              }
+            </td>
+          </tr>
+        `);
+      });
+
+      tbodyInitial.innerHTML = initRows.join('');
+      tbodyMonthly.innerHTML = monthRows.join('');
+
+      const initCash = Math.max(0, state.initialCapital - sumInitInvested);
+      const monthCash = Math.max(0, state.monthlyBudget - sumMonthInvested);
+
+      document.getElementById('table-initial-badge').textContent = `Investi : ${formatEuro(sumInitInvested)} • Reliquat : ${formatEuro(initCash)}`;
+      document.getElementById('table-monthly-badge').textContent = `Investi : ${formatEuro(sumMonthInvested)} • Reliquat : ${formatEuro(monthCash)}`;
+
+      const avgDiv = totalWeight > 0 ? weightedDivSum / totalWeight : 0;
+      updatePlanSummaries(sumInitInvested, sumInitFees, sumMonthInvested, sumMonthFees, avgDiv);
+      renderAllocationChart();
+    }
+
+    function updatePlanSummaries(initInvested, initFees, monthInvested, monthFees, avgDiv) {
+      const initCash = Math.max(0, state.initialCapital - initInvested);
+      const monthCash = Math.max(0, state.monthlyBudget - monthInvested);
+      const month1Available = state.monthlyBudget + initCash;
+
+      document.getElementById('sum-init-target').textContent = formatEuroInt(state.initialCapital);
+      document.getElementById('sum-init-invested').textContent = formatEuro(initInvested);
+      document.getElementById('sum-init-fees').textContent = formatEuro(initFees);
+      document.getElementById('sum-init-cash').textContent = formatEuro(initCash);
+
+      document.getElementById('sum-month-target').textContent = formatEuroInt(state.monthlyBudget);
+      document.getElementById('sum-month-invested').textContent = formatEuro(monthInvested);
+      document.getElementById('sum-month-fees').textContent = formatEuro(monthFees);
+      document.getElementById('sum-month-cash').textContent = formatEuro(monthCash);
+      document.getElementById('sum-month1-total').textContent = formatEuro(month1Available);
+
+      document.getElementById('summary-dividend').textContent = `${avgDiv.toFixed(2).replace('.', ',')} % / an`;
+    }
+
+    function renderAllocationChart() {
+      const canvas = document.getElementById('allocationChart');
+      const emptyEl = document.getElementById('donut-empty-state');
+      const activeItems = state.plan.filter(i => i.weight > 0);
+
+      if (activeItems.length === 0) {
+        canvas.classList.add('hidden');
+        emptyEl.classList.remove('hidden');
+        if (allocationChartInstance) {
+          allocationChartInstance.destroy();
+          allocationChartInstance = null;
+        }
+        return;
+      }
+
+      canvas.classList.remove('hidden');
+      emptyEl.classList.add('hidden');
+
+      const labels = activeItems.map(i => getAssetById(i.id).ticker);
+      const data = activeItems.map(i => i.weight);
+      const colors = activeItems.map(i => {
+        const idx = state.plan.findIndex(p => p.id === i.id);
+        return CHART_COLORS[idx % CHART_COLORS.length];
+      });
+
+      const isDark = state.darkMode;
+      if (allocationChartInstance) allocationChartInstance.destroy();
+
+      allocationChartInstance = new Chart(canvas.getContext('2d'), {
+        type: 'doughnut',
+        data: {
+          labels,
+          datasets: [{
+            data,
+            backgroundColor: colors,
+            borderWidth: 2,
+            borderColor: isDark ? '#0f172a' : '#ffffff',
+            hoverOffset: 6
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          cutout: '66%',
+          plugins: {
+            legend: {
+              position: 'bottom',
+              labels: {
+                color: isDark ? '#cbd5e1' : '#334155',
+                usePointStyle: true,
+                pointStyle: 'circle',
+                padding: 14,
+                font: { family: 'Inter', size: 12, weight: '600' }
+              }
+            },
+            tooltip: {
+              backgroundColor: isDark ? '#1e293b' : '#0f172a',
+              padding: 10,
+              cornerRadius: 10,
+              callbacks: {
+                label: (ctx) => {
+                  const pct = ctx.parsed;
+                  const initEur = (state.initialCapital * pct) / 100;
+                  const monthEur = (state.monthlyBudget * pct) / 100;
+                  return ` ${ctx.label} (${pct}%) : ${formatEuroInt(initEur)} départ + ${formatEuro(monthEur)}/m`;
+                }
+              }
+            }
+          }
+        }
+      });
+    }
+
+    /* =====================================================================
+     * ONGLET 3 : SIMULATEUR LONG TERME
+     * ===================================================================== */
+    function syncSimulatorSlidersFromState() {
+      document.getElementById('sim-initial').value = Math.min(50000, state.simulator.initial);
+      document.getElementById('sim-monthly').value = Math.min(1000, state.simulator.monthly);
+      document.getElementById('sim-years').value = state.simulator.years;
+      document.getElementById('sim-rate').value = state.simulator.rate;
+    }
+
+    function applySimulatorToPlan() {
+      state.initialCapital = Number(document.getElementById('sim-initial').value);
+      state.monthlyBudget = Number(document.getElementById('sim-monthly').value);
+      saveState();
+      updateHeaderAndBadges();
+      showToast(`Mon Plan mis à jour : ${formatEuroInt(state.initialCapital)} + ${formatEuroInt(state.monthlyBudget)}/mois`);
+    }
+
+    function updateSimulator() {
+      const initial = Number(document.getElementById('sim-initial').value);
+      const monthly = Number(document.getElementById('sim-monthly').value);
+      const years = Number(document.getElementById('sim-years').value);
+      const rate = Number(document.getElementById('sim-rate').value);
+
+      state.simulator = { initial, monthly, years, rate };
+      saveState();
+
+      document.getElementById('sim-initial-val').textContent = formatEuroInt(initial);
+      document.getElementById('sim-monthly-val').textContent = `${monthly} €`;
+      document.getElementById('sim-years-val').textContent = `${years} an${years > 1 ? 's' : ''}`;
+      document.getElementById('sim-rate-val').textContent = `${rate.toFixed(1).replace('.', ',')} %`;
+
+      // Simulation mois par mois avec plafond légal PEA de 150 000 € (apport initial inclus)
+      const monthlyRate = Math.pow(1 + rate / 100, 1 / 12) - 1;
+      let totalContributed = Math.min(initial, PEA_CAP);
+      let balance = totalContributed;
+      let capReachedYear = totalContributed >= PEA_CAP ? 0 : null;
+
+      const labels = ['Année 0'];
+      const contributedSeries = [Math.round(totalContributed)];
+      const balanceSeries = [Math.round(balance)];
+
+      for (let y = 1; y <= years; y++) {
+        for (let m = 1; m <= 12; m++) {
+          balance *= (1 + monthlyRate);
+          if (totalContributed < PEA_CAP) {
+            const allowedDeposit = Math.min(monthly, PEA_CAP - totalContributed);
+            totalContributed += allowedDeposit;
+            balance += allowedDeposit;
+            if (totalContributed >= PEA_CAP && capReachedYear === null) {
+              capReachedYear = y;
+            }
+          }
+        }
+        labels.push(`An ${y}`);
+        contributedSeries.push(Math.round(totalContributed));
+        balanceSeries.push(Math.round(balance));
+      }
+
+      const grossCapital = balance;
+      const gains = Math.max(0, grossCapital - totalContributed);
+
+      // Fiscalité PEA : 17,2% après 5 ans, 30% avant 5 ans (PFU)
+      const peaTaxRate = years >= 5 ? 0.172 : 0.30;
+      const ctoTaxRate = 0.30;
+
+      const peaTax = gains * peaTaxRate;
+      const ctoTax = gains * ctoTaxRate;
+      const netPeaCapital = grossCapital - peaTax;
+      const netCtoCapital = grossCapital - ctoTax;
+      const taxSaving = Math.max(0, ctoTax - peaTax);
+
+      // KPIs
+      document.getElementById('kpi-gross').textContent = formatEuroInt(grossCapital);
+      const mult = totalContributed > 0 ? (grossCapital / totalContributed) : 1;
+      document.getElementById('kpi-multiplier').textContent = `Soit x${mult.toFixed(2).replace('.', ',')} votre mise`;
+
+      document.getElementById('kpi-invested').textContent = formatEuroInt(totalContributed);
+      const capPct = Math.min(100, (totalContributed / PEA_CAP) * 100);
+      document.getElementById('kpi-cap-progress').textContent = `${capPct.toFixed(0)} % du plafond PEA (150 000 €)`;
+      document.getElementById('kpi-cap-badge').classList.toggle('hidden', totalContributed < PEA_CAP);
+
+      document.getElementById('kpi-gains').textContent = `+${formatEuroInt(gains)}`;
+      const gainsShare = grossCapital > 0 ? (gains / grossCapital) * 100 : 0;
+      document.getElementById('kpi-gains-share').textContent = `${gainsShare.toFixed(0)} % du capital final`;
+
+      document.getElementById('kpi-net-pea').textContent = formatEuroInt(netPeaCapital);
+      document.getElementById('kpi-tax-rate-label').textContent = years >= 5 ? 'PS 17,2%' : 'PFU 30%';
+      document.getElementById('kpi-tax-saving').textContent = years >= 5
+        ? `Économie vs CTO : +${formatEuroInt(taxSaving)}`
+        : 'Avantage fiscal actif dès 5 ans';
+
+      // Comparatif fiscal
+      document.getElementById('comp-pea-rate').textContent = years >= 5 ? '17,2%' : '30%';
+      document.getElementById('comp-pea-net').textContent = formatEuroInt(netPeaCapital);
+      document.getElementById('comp-cto-net').textContent = formatEuroInt(netCtoCapital);
+      document.getElementById('comp-saving').textContent = `+${formatEuroInt(taxSaving)}`;
+      document.getElementById('sim-under5-note').classList.toggle('hidden', years >= 5);
+
+      const capNotice = document.getElementById('sim-cap-notice');
+      if (capReachedYear !== null) {
+        capNotice.classList.remove('hidden');
+        document.getElementById('sim-cap-year').textContent = capReachedYear;
+      } else {
+        capNotice.classList.add('hidden');
+      }
+
+      renderSimulatorChart(labels, contributedSeries, balanceSeries);
+    }
+
+    function renderSimulatorChart(labels, contributedSeries, balanceSeries) {
+      const canvas = document.getElementById('simulatorChart');
+      const ctx = canvas.getContext('2d');
+      const isDark = state.darkMode;
+
+      const gradient = ctx.createLinearGradient(0, 0, 0, 340);
+      gradient.addColorStop(0, isDark ? 'rgba(16, 185, 129, 0.35)' : 'rgba(5, 150, 105, 0.25)');
+      gradient.addColorStop(1, 'rgba(5, 150, 105, 0.01)');
+
+      if (simulatorChartInstance) simulatorChartInstance.destroy();
+
+      simulatorChartInstance = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels,
+          datasets: [
+            {
+              label: 'Valeur totale du PEA (brut)',
+              data: balanceSeries,
+              borderColor: '#059669',
+              backgroundColor: gradient,
+              borderWidth: 2.5,
+              fill: true,
+              tension: 0.32,
+              pointRadius: 0,
+              pointHoverRadius: 5,
+              pointHoverBackgroundColor: '#059669'
+            },
+            {
+              label: 'Versements cumulés',
+              data: contributedSeries,
+              borderColor: isDark ? '#94a3b8' : '#0f172a',
+              backgroundColor: isDark ? 'rgba(148, 163, 184, 0.12)' : 'rgba(15, 23, 42, 0.08)',
+              borderWidth: 2,
+              borderDash: [5, 5],
+              fill: true,
+              tension: 0.15,
+              pointRadius: 0,
+              pointHoverRadius: 4,
+              pointHoverBackgroundColor: isDark ? '#cbd5e1' : '#0f172a'
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          interaction: { mode: 'index', intersect: false },
+          plugins: {
+            legend: {
+              position: 'top',
+              align: 'start',
+              labels: {
+                color: isDark ? '#cbd5e1' : '#334155',
+                usePointStyle: true,
+                padding: 16,
+                font: { family: 'Inter', size: 12, weight: '600' }
+              }
+            },
+            tooltip: {
+              backgroundColor: isDark ? '#1e293b' : '#0f172a',
+              padding: 12,
+              cornerRadius: 10,
+              callbacks: {
+                label: (ctx) => ` ${ctx.dataset.label} : ${formatEuroInt(ctx.parsed.y)}`,
+                afterBody: (items) => {
+                  if (items.length >= 2) {
+                    const gain = items[0].parsed.y - items[1].parsed.y;
+                    return `\n Plus-values latentes : +${formatEuroInt(gain)}`;
+                  }
+                  return '';
+                }
+              }
+            }
+          },
+          scales: {
+            x: {
+              grid: { display: false },
+              ticks: {
+                color: isDark ? '#94a3b8' : '#64748b',
+                maxTicksLimit: 8,
+                font: { family: 'Inter', size: 11 }
+              }
+            },
+            y: {
+              beginAtZero: true,
+              grid: { color: isDark ? 'rgba(51, 65, 85, 0.45)' : 'rgba(226, 232, 240, 0.8)' },
+              ticks: {
+                color: isDark ? '#94a3b8' : '#64748b',
+                font: { family: 'Inter', size: 11 },
+                callback: (val) => val >= 1000 ? (val / 1000).toFixed(0) + ' k€' : val + ' €'
+              }
+            }
+          }
+        }
+      });
+    }
+
+    /* =====================================================================
+     * INITIALISATION
+     * ===================================================================== */
+    window.addEventListener('DOMContentLoaded', () => {
+      loadState();
+      applyDarkMode();
+      syncSimulatorSlidersFromState();
+      updateHeaderAndBadges();
+      setCategoryFilter('all');
+      setPlanView(state.planView);
+      switchTab('plan');
+    });
+  </script>
+</body>
+</html>
